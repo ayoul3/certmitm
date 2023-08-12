@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  certmitm:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "443:443"
+    dns:
+      - 8.8.8.8

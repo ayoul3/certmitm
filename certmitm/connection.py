@@ -16,6 +16,10 @@ connection_counter = counter()
 
 class connection(object):
 
+    def dns_to_dest(self, domain, port):
+        ip = socket.gethostbyname(domain)
+        return ip, port
+
     def __init__(self, client_socket, logger):
         self.id = next(connection_counter)
         self.timestamp = time.time()
@@ -35,6 +39,7 @@ class connection(object):
             self.upstream_sni = None
         if self.upstream_sni:
             self.upstream_name = self.upstream_sni
+            self.upstream_ip, self.upstream_port = self.dns_to_dest(self.upstream_name, 443)
         else:
             self.upstream_name = self.upstream_ip
         self.upstream_str = f"{self.upstream_ip}:{self.upstream_port}:{self.upstream_sni}"
@@ -176,6 +181,7 @@ class mitm_connection(object):
         self.downstream_tls_buf = b""
 
     def set_upstream(self, ip, port):
+        self.logger.debug(f"LUPIN IS HERE: {ip} {port}")
         self.logger.debug(f"connecting to TCP upstream")
         self.upstream_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         self.upstream_socket.settimeout(10)

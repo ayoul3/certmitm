@@ -49,7 +49,15 @@ def threaded_connection_handler(downstream_socket):
         # Lets start by initializing a mitm_connection object with the client connection
         mitm_connection = certmitm.connection.mitm_connection(downstream_socket, logger)
         connection = certmitm.connection.connection(mitm_connection.downstream_socket, logger)
-        logger.debug(f"got connection: {connection.to_str()}")
+        # Detect if this is a proxy connection
+        first_data = mitm_connection.downstream_socket.recv(1024, socket.MSG_PEEK)  # Peek at the data without removing it from the socket's buffer
+        """if first_data.startswith(b"CONNECT "):
+            # This is a proxy connection
+            # Extract the hostname from the CONNECT request
+            hostname = first_data.split(b" ")[1].split(b":")[0].decode()
+            connection.upstream_str = hostname
+            connection.upstream_sni = hostname"""
+
 
         # Lets get a test for the client
         test = connection_tests.get_test(connection)
