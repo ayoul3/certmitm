@@ -6,19 +6,27 @@ from dns.rdatatype import *
 from dns.rdataclass import *
 from dns.flags import *
 import dns.name
+import os
+
+def ipv4_to_ipv6(ipv4_addr):
+    # Convert IPv4 to IPv6
+    # In this case, we are using the IPv4-mapped IPv6 addresses
+    return "::ffff:" + ipv4_addr
 
 def dns_response(data):
     request = dns.message.from_wire(data)
     response = dns.message.make_response(request)
 
+    # Retrieve IP from environment variable
+    dnscallback_ip = os.environ.get("dnscallback")
+
     for question in request.question:
         # Creating an answer section for the DNS message.
-        # This redirects every request to 127.0.0.1.
         if question.rdtype == A:
-            rrset = dns.rrset.from_text(question.name, 3600, IN, A, "127.0.0.1")
+            rrset = dns.rrset.from_text(question.name, 3600, IN, A, dnscallback_ip)
             response.answer.append(rrset)
         elif question.rdtype == AAAA:
-            rrset = dns.rrset.from_text(question.name, 3600, IN, AAAA, "::1")
+            rrset = dns.rrset.from_text(question.name, 3600, IN, AAAA, ipv4_to_ipv6(dnscallback_ip))
             response.answer.append(rrset)
 
     return response.to_wire()

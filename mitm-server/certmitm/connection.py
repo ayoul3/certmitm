@@ -17,8 +17,15 @@ connection_counter = counter()
 class connection(object):
 
     def dns_to_dest(self, domain, port):
-        ip = socket.gethostbyname(domain)
-        return ip, port
+        try:
+            self.logger.debug(f"trying to find ip for domain: {domain}")
+            ip = socket.gethostbyname(domain)
+            self.logger.debug(f"found ip {ip}")
+            return ip, port
+        except Exception as err:
+            self.logger.debug(f"Domain exception occurred: {err}")
+
+        return "127.0.0.1", 443
 
     def __init__(self, client_socket, logger):
         self.id = next(connection_counter)
