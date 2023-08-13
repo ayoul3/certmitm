@@ -1,6 +1,6 @@
 #!/bin/bash
 
-dns=192.168.130.196
+dns=$1
 
 echo "[*] Starting the DNS Server"
 
