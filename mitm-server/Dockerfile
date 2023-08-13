@@ -25,4 +25,4 @@ COPY real_certs real_certs/
 
 
 # Command to run the application
-CMD ["python3", "certmitm.py", "--listen", "443", "--workdir", "testing", "--verbose", "--show-data", "--debug"]
+CMD ["python3", "certmitm.py", "--listen", "443", "--workdir", "testing", "--verbose", "--show-data"]

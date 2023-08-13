@@ -9,12 +9,3 @@ services:
       - "443:443"
     dns:
       - 8.8.8.8
-  
-  dns-proxy:
-    build:
-      context: dns-server
-      dockerfile: Dockerfile
-    environment:
-      - dnscallback=127.0.0.1
-    ports:
-      - "53:53/udp"
